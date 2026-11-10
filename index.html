@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CDN Lab – Mô phỏng Cache tại Edge</title>
+<style>
+:root{--bg:#f4f7fb;--panel:#fff;--ink:#15243a;--muted:#66758b;--line:#dce4ef;--blue:#2563eb;--green:#15966a;--orange:#d97706;--red:#dc5353;--navy:#10233f;--softblue:#eaf1ff;--softgreen:#e9f8f1;--softorange:#fff4e4;--shadow:0 10px 28px rgba(24,45,78,.07)}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,Segoe UI,Arial,sans-serif;line-height:1.45}.wrap{max-width:1240px;margin:0 auto;padding:24px 22px 40px}.hero{background:linear-gradient(120deg,#10233f,#173e68);color:#fff;border-radius:20px;padding:25px 28px;box-shadow:var(--shadow);display:flex;justify-content:space-between;gap:18px;align-items:center}.eyebrow{font-size:12px;letter-spacing:1.3px;text-transform:uppercase;color:#bcd2f0;font-weight:700}.hero h1{font-size:clamp(23px,3vw,34px);margin:6px 0 7px}.hero p{margin:0;color:#d5e2f3;max-width:760px}.heroTag{white-space:nowrap;border:1px solid #6c8db6;background:#ffffff12;padding:9px 13px;border-radius:30px;font-size:13px;font-weight:700}.section{margin-top:20px}.sectionHead{display:flex;align-items:end;justify-content:space-between;gap:15px;margin:0 0 10px}.sectionHead h2{font-size:19px;margin:0}.sectionHead p{margin:0;color:var(--muted);font-size:13px}.layout{display:grid;grid-template-columns:330px 1fr;gap:16px}.panel{background:var(--panel);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);padding:17px}.panel h3{margin:0 0 13px;font-size:16px}.field{margin:13px 0}.field label{display:block;font-size:13px;color:var(--muted);font-weight:650;margin-bottom:6px}.field input,.field select{width:100%;padding:10px 11px;border:1px solid #cbd6e4;border-radius:9px;color:var(--ink);font-size:14px;background:#fff}.hint{font-size:12px;color:var(--muted);margin-top:5px}.btns{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:15px}.btn{border:0;padding:11px 12px;border-radius:9px;font-weight:750;font-size:13px;cursor:pointer;transition:.15s}.btn:disabled{opacity:.45;cursor:not-allowed}.primary{background:var(--blue);color:#fff}.secondary{background:#eaf0f8;color:#25415f}.dark{background:var(--navy);color:#fff}.ghost{background:#fff;border:1px solid var(--line);color:var(--ink)}.btn:hover:not(:disabled){transform:translateY(-1px);filter:brightness(.98)}.wide{grid-column:1/-1}.tip{margin-top:13px;background:#f3f7fc;border-left:3px solid var(--blue);padding:10px 11px;border-radius:7px;font-size:12px;color:#42546c}.rightCol{display:grid;gap:16px}.diagramPanel{padding:13px 15px 10px}.diagramTop{display:flex;justify-content:space-between;align-items:center;padding:2px 4px 7px;gap:10px}.diagramTop h3{margin:0}.legend{display:flex;gap:13px;flex-wrap:wrap;font-size:11px;color:var(--muted)}.dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px}.dot.blue{background:var(--blue)}.dot.green{background:var(--green)}.dot.orange{background:var(--orange)}svg{width:100%;height:auto;display:block;max-height:420px}.wire{stroke:#c9d4e2;stroke-width:3;fill:none;marker-end:url(#arrow)}.wire.active{stroke:var(--blue);stroke-width:4;stroke-dasharray:8 7;animation:flow .65s linear infinite;marker-end:url(#arrowBlue)}.wire.hit{stroke:var(--green);stroke-width:4;stroke-dasharray:8 7;animation:flow .65s linear infinite;marker-end:url(#arrowGreen)}.wire.miss{stroke:var(--orange);stroke-width:4;stroke-dasharray:8 7;animation:flow .65s linear infinite;marker-end:url(#arrowOrange)}@keyframes flow{to{stroke-dashoffset:-30}}.node{fill:#fff;stroke:#cbd6e4;stroke-width:1.5}.node.user{fill:#edf3ff;stroke:#8daee9}.node.edge.selected{fill:#eaf1ff;stroke:var(--blue);stroke-width:2.5}.node.edge.hitNode{fill:#e9f8f1;stroke:var(--green);stroke-width:2.5}.node.edge.missNode{fill:#fff4e4;stroke:var(--orange);stroke-width:2.5}.node.origin{fill:#f1f4f8;stroke:#9eacc0}.svgTitle{font-size:13px;font-weight:800;fill:#1b2d45}.svgSub{font-size:10px;fill:#61718a}.edgeLabel{font-size:11px;font-weight:750;fill:#23405f}.originIcon{font-size:23px}.svgSmall{font-size:9px;fill:#66758b}.statusBar{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;background:#f4f7fb;margin:4px 0 0;font-size:13px}.statusText{font-weight:700}.statusText.hit{color:var(--green)}.statusText.miss{color:var(--orange)}.statusText.idle{color:var(--muted)}.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.metric{background:#fff;border:1px solid var(--line);border-radius:13px;padding:13px}.metric .name{font-size:11px;color:var(--muted);font-weight:700}.metric .value{font-size:25px;font-weight:850;letter-spacing:-.5px;margin:3px 0}.metric .sub{font-size:11px;color:var(--muted)}.metric.hitMetric .value{color:var(--green)}.metric.missMetric .value{color:var(--orange)}.cacheGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.edgeCache{border:1px solid var(--line);border-radius:12px;padding:11px;background:#fff;min-width:0}.edgeCache.selected{border:2px solid var(--blue);padding:10px;background:#f7faff}.edgeCache h4{font-size:13px;margin:0 0 3px}.edgeCache .region{font-size:11px;color:var(--muted);margin-bottom:9px}.chips{display:flex;flex-wrap:wrap;gap:5px;min-height:28px}.chip{font-size:11px;font-weight:700;border-radius:6px;background:#eaf1ff;color:#234d9a;padding:5px 7px}.chip:first-child{background:#d9f4e8;color:#08734e}.empty{font-size:11px;color:#94a0b1;font-style:italic}.lruHint{font-size:10px;color:var(--muted);margin-top:8px}.lower{display:grid;grid-template-columns:1.15fr .85fr;gap:16px}.tableWrap{overflow:auto}table{width:100%;border-collapse:collapse;font-size:12px;min-width:480px}th,td{padding:9px 8px;border-bottom:1px solid #edf1f6;text-align:left}th{color:var(--muted);font-size:11px;background:#f8fafd}td{font-weight:600}.tag{display:inline-block;border-radius:20px;padding:3px 7px;font-size:10px;font-weight:800}.tag.hit{background:#e5f7ee;color:#08734e}.tag.miss{background:#fff0dc;color:#a65b00}.explain{background:#f4f8fd;border:1px solid #e0e9f4;border-radius:11px;padding:13px;font-size:13px;min-height:96px}.explain strong{display:block;margin-bottom:5px}.bar{height:9px;border-radius:20px;background:#edf1f6;overflow:hidden;margin:8px 0}.bar>span{display:block;height:100%;width:0;background:var(--green);border-radius:20px;transition:width .25s}.compare{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:12px}.compare>div{background:#f8fafc;border:1px solid var(--line);border-radius:10px;padding:10px}.compare .big{font-size:20px;font-weight:850}.compare small{font-size:11px;color:var(--muted)}.foot{margin-top:17px;color:var(--muted);font-size:11px;text-align:center}.pill{padding:5px 9px;border-radius:20px;background:#eaf0f8;color:#38516e;font-weight:700;font-size:11px}.running{background:#fff4e4;color:#a65b00}.legendNote{font-size:11px;color:var(--muted);margin-top:7px}.num{font-variant-numeric:tabular-nums}
+@media(max-width:900px){.layout{grid-template-columns:1fr}.cacheGrid{grid-template-columns:repeat(2,1fr)}.metrics{grid-template-columns:repeat(2,1fr)}.lower{grid-template-columns:1fr}.hero{align-items:flex-start;flex-direction:column}.heroTag{white-space:normal}}@media(max-width:520px){.wrap{padding:12px}.panel{padding:13px}.metrics{gap:7px}.metric{padding:10px}.metric .value{font-size:21px}.cacheGrid{gap:7px}.diagramTop{align-items:flex-start;flex-direction:column}}
+.policyGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px}.policyCard{background:#fff;border:1px solid var(--line);border-radius:13px;padding:14px;transition:.15s}.policyCard.selected{border:2px solid var(--blue);padding:13px;background:#f5f8ff}.policyCard h3{font-size:17px;margin:0 0 3px}.policyCard b{font-size:11px;color:var(--muted)}.policyCard p{font-size:12px;color:#526279;margin:8px 0 0}.comparePanel{padding:16px}.compareIntro{display:flex;justify-content:space-between;align-items:center;gap:14px}.compareIntro h3{margin:0 0 4px;font-size:16px}.compareIntro p{font-size:12px;color:var(--muted);margin:3px 0}.compareResult{margin-top:12px;overflow:auto}.compareResult table{min-width:600px}.compareResult .bestNote{font-size:12px;color:#526279;margin-top:9px;background:#f4f7fb;padding:9px 11px;border-radius:8px}.eviction{font-size:10px;color:#7b5a23;margin-top:5px}.lruHint{line-height:1.35}
+@media(max-width:900px){.policyGrid{grid-template-columns:1fr}.compareIntro{align-items:flex-start;flex-direction:column}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="hero">
+    <div><div class="eyebrow">MÔ PHỎNG TRỰC QUAN · ĐỀ TÀI 14</div><h1>CDN Lab – Video đi đường nào?</h1><p>Quan sát cách Edge Server lưu video, xử lý Cache Hit / Cache Miss và giảm số lần phải hỏi máy chủ Origin.</p></div>
+    <div id="heroTag" class="heroTag">1 Origin · 4 Edge · 100 video · LRU</div>
+  </header>
+
+  <section class="section">
+    <div class="sectionHead"><h2>1. Điều khiển mô phỏng</h2><p>Thử yêu cầu cùng một video nhiều lần để thấy sự khác biệt.</p></div>
+    <div class="layout">
+      <div class="panel">
+        <h3>Tạo yêu cầu xem video</h3>
+        <div class="field"><label for="region">Khu vực người xem</label><select id="region"><option value="0">Miền Bắc – Edge 1</option><option value="1">Miền Trung – Edge 2</option><option value="2">Miền Nam – Edge 3</option><option value="3">Miền Tây – Edge 4</option></select></div>
+        <div class="field"><label for="videoId">Video muốn xem (1–100)</label><input id="videoId" type="number" min="1" max="100" value="1"><div class="hint">Video 1–5 được xem phổ biến hơn trong phân bố Zipf.</div></div>
+        <div class="field"><label for="capacity">Dung lượng Cache mỗi Edge</label><select id="capacity"><option value="2">2 video</option><option value="3" selected>3 video</option><option value="5">5 video</option><option value="8">8 video</option></select></div>
+        <div class="field"><label for="algorithm">Thuật toán thay thế Cache</label><select id="algorithm"><option value="LRU" selected>LRU – Ít được sử dụng gần đây nhất</option><option value="LFU">LFU – Ít được truy cập nhất</option><option value="FIFO">FIFO – Được đưa vào trước nhất</option></select><div id="algorithmHint" class="hint">LRU: khi Cache đầy, loại video lâu chưa được truy cập nhất.</div></div>
+        <div class="btns">
+          <button id="requestBtn" class="btn primary">▶ Gửi 1 yêu cầu</button>
+          <button id="autoBtn" class="btn dark">⟳ Chạy 30 yêu cầu</button>
+          <button id="popularBtn" class="btn secondary wide">Thử chuỗi dễ hiểu: Video 1 → 1 → 2 → 1</button>
+          <button id="resetBtn" class="btn ghost wide">↺ Đặt lại mô phỏng</button>
+        </div>
+        <div class="tip"><b>Mẹo thuyết trình:</b> Chọn Miền Bắc, giữ Video 1 và bấm “Gửi 1 yêu cầu” hai lần. Lần đầu sẽ là MISS, lần hai sẽ là HIT.</div>
+      </div>
+
+      <div class="rightCol">
+        <div class="panel diagramPanel">
+          <div class="diagramTop"><h3>2. Đường đi của yêu cầu</h3><div class="legend"><span><i class="dot blue"></i>User → Edge</span><span><i class="dot green"></i>Cache Hit</span><span><i class="dot orange"></i>Cache Miss → Origin</span></div></div>
+          <svg viewBox="0 0 720 390" role="img" aria-label="Sơ đồ người dùng gửi yêu cầu đến một trong bốn Edge Server; Edge có thể lấy video từ Origin nếu Cache Miss">
+            <defs>
+              <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#c9d4e2"/></marker>
+              <marker id="arrowBlue" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#2563eb"/></marker>
+              <marker id="arrowGreen" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#15966a"/></marker>
+              <marker id="arrowOrange" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#d97706"/></marker>
+            </defs>
+            <path id="u0" class="wire" d="M160 190 C220 190 240 55 305 55"/><path id="u1" class="wire" d="M160 190 C230 190 245 145 305 145"/><path id="u2" class="wire" d="M160 190 C230 190 245 245 305 245"/><path id="u3" class="wire" d="M160 190 C220 190 240 335 305 335"/>
+            <path id="o0" class="wire" d="M465 55 C510 55 510 170 555 170"/><path id="o1" class="wire" d="M465 145 C510 145 515 180 555 180"/><path id="o2" class="wire" d="M465 245 C510 245 515 205 555 205"/><path id="o3" class="wire" d="M465 335 C510 335 510 220 555 220"/>
+            <rect class="node user" x="18" y="145" width="142" height="90" rx="13"/><text x="89" y="175" text-anchor="middle" class="svgTitle">👤 NGƯỜI XEM</text><text x="89" y="197" text-anchor="middle" class="svgSub">Gửi yêu cầu video</text><text x="89" y="215" text-anchor="middle" class="svgSmall">User</text>
+            <g id="edgeNode0"><rect class="node edge" x="305" y="25" width="160" height="60" rx="11"/><text x="320" y="49" class="svgTitle">Edge Server 1</text><text x="320" y="68" class="svgSub">Miền Bắc · Cache</text></g>
+            <g id="edgeNode1"><rect class="node edge" x="305" y="115" width="160" height="60" rx="11"/><text x="320" y="139" class="svgTitle">Edge Server 2</text><text x="320" y="158" class="svgSub">Miền Trung · Cache</text></g>
+            <g id="edgeNode2"><rect class="node edge" x="305" y="215" width="160" height="60" rx="11"/><text x="320" y="239" class="svgTitle">Edge Server 3</text><text x="320" y="258" class="svgSub">Miền Nam · Cache</text></g>
+            <g id="edgeNode3"><rect class="node edge" x="305" y="305" width="160" height="60" rx="11"/><text x="320" y="329" class="svgTitle">Edge Server 4</text><text x="320" y="348" class="svgSub">Miền Tây · Cache</text></g>
+            <rect class="node origin" x="555" y="145" width="145" height="100" rx="13"/><text x="627" y="178" text-anchor="middle" class="svgTitle">🗄 ORIGIN</text><text x="627" y="201" text-anchor="middle" class="svgSub">Máy chủ gốc</text><text x="627" y="222" text-anchor="middle" class="svgSmall">Lưu toàn bộ video</text>
+          </svg>
+          <div class="statusBar"><span id="statusText" class="statusText idle">Chưa có yêu cầu – hãy bấm “Gửi 1 yêu cầu”.</span><span id="statusLatency" class="pill">Độ trễ: —</span></div>
+          <div class="legendNote">Mũi tên màu xanh dương: yêu cầu đến Edge. Màu xanh lá: lấy được từ Cache. Màu cam: Edge phải lấy video từ Origin.</div>
+        </div>
+        <div class="metrics">
+          <div class="metric"><div class="name">TỔNG YÊU CẦU</div><div id="mTotal" class="value num">0</div><div class="sub">Lượt xem đã mô phỏng</div></div>
+          <div class="metric hitMetric"><div class="name">CACHE HIT RATIO</div><div id="mHit" class="value num">0%</div><div class="sub">Tỷ lệ lấy được từ Cache</div></div>
+          <div class="metric missMetric"><div class="name">ORIGIN REQUEST</div><div id="mOrigin" class="value num">0</div><div class="sub">Số lần phải hỏi Origin</div></div>
+          <div class="metric"><div class="name">ĐỘ TRỄ TB CÓ CDN</div><div id="mLatency" class="value num">0 ms</div><div class="sub">Giả định: 15 ms / 150 ms</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="sectionHead"><h2 id="cacheHeading">3. Bộ nhớ Cache của từng Edge</h2><p id="cacheOrderHint">Thứ tự hiển thị thay đổi theo thuật toán đang chọn.</p></div>
+    <div id="cacheGrid" class="cacheGrid"></div>
+  </section>
+
+  <section class="section">
+    <div class="sectionHead"><h2>4. So sánh ba thuật toán thay thế Cache</h2><p>Cùng một chuỗi yêu cầu, mỗi thuật toán có cách chọn video bị loại khác nhau.</p></div>
+    <div class="policyGrid">
+      <div class="policyCard" id="policyLRU"><h3>LRU</h3><b>Least Recently Used</b><p>Loại video lâu chưa được truy cập nhất. Mỗi lần xem lại video sẽ làm video đó trở thành mới dùng gần đây.</p></div>
+      <div class="policyCard" id="policyLFU"><h3>LFU</h3><b>Least Frequently Used</b><p>Loại video có số lần truy cập thấp nhất. Nếu bằng tần suất, mô hình chọn video lâu chưa được truy cập hơn.</p></div>
+      <div class="policyCard" id="policyFIFO"><h3>FIFO</h3><b>First In, First Out</b><p>Loại video được đưa vào Cache sớm nhất. Dù video đó vừa được xem lại, thứ tự vào Cache vẫn không đổi.</p></div>
+    </div>
+    <div class="panel comparePanel">
+      <div class="compareIntro"><div><h3>Thử nghiệm nhanh với cùng dữ liệu</h3><p>Chuỗi yêu cầu: <strong>1 → 2 → 1 → 3 → 4 → 2 → 3</strong>, dung lượng Cache = 3 video.</p><p class="hint">Bảng dưới chạy độc lập cho cả ba thuật toán, không làm thay đổi mô phỏng chính phía trên.</p></div><button id="compareBtn" class="btn primary">▶ So sánh cả 3 thuật toán</button></div>
+      <div id="compareResult" class="compareResult">Nhấn “So sánh cả 3 thuật toán” để xem số lần Hit/Miss và nội dung Cache cuối cùng.</div>
+    </div>
+  </section>
+
+  <section class="section lower">
+    <div class="panel">
+      <div class="sectionHead"><h2>5. Nhật ký yêu cầu gần đây</h2><p>Quan sát từng lần Hit / Miss</p></div>
+      <div class="tableWrap"><table><thead><tr><th>#</th><th>Khu vực</th><th>Video</th><th>Kết quả</th><th>Độ trễ</th><th>Hỏi Origin?</th></tr></thead><tbody id="logBody"><tr><td colspan="6" style="color:#8a98aa;text-align:center">Chưa có dữ liệu. Hãy thử gửi yêu cầu.</td></tr></tbody></table></div>
+    </div>
+    <div class="panel">
+      <h3>6. Điều gì vừa xảy ra?</h3>
+      <div id="explanation" class="explain"><strong>Chờ yêu cầu đầu tiên</strong>Chọn một khu vực, chọn Video 1 và bấm gửi yêu cầu. Hãy quan sát đường đi và bộ nhớ Cache của Edge tương ứng.</div>
+      <div style="margin-top:13px;font-size:12px;font-weight:750">Tỷ lệ yêu cầu được Edge phục vụ</div><div class="bar"><span id="hitBar"></span></div>
+      <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--muted)"><span>Origin phải xử lý tất cả khi không có CDN</span><span id="originCompare">0 / 0</span></div>
+      <div class="compare"><div><small>KHÔNG CÓ CDN</small><div id="baseLatency" class="big">180 ms</div><small>Mọi yêu cầu về Origin</small></div><div><small>CÓ CDN (HIỆN TẠI)</small><div id="cdnLatency" class="big">—</div><small>Hit nhanh hơn, Miss mới hỏi Origin</small></div></div>
+    </div>
+  </section>
+  <div class="foot">Mô hình minh họa dùng độ trễ giả định: User → Edge = 15 ms; Edge → Origin = 150 ms; User → Origin khi không có CDN = 180 ms. Đây là mô phỏng học tập, không phải phép đo mạng Internet thực tế.</div>
+</div>
+<script>
+const REGIONS=['Miền Bắc','Miền Trung','Miền Nam','Miền Tây'];
+const USER_EDGE_MS=15, EDGE_ORIGIN_MS=150, DIRECT_ORIGIN_MS=180;
+const ALGORITHMS=['LRU','LFU','FIFO'];
+let capacity=3, algorithm='LRU', caches=[[],[],[],[]], cacheClock=0;
+let total=0, hits=0, misses=0, originRequests=0, latencySum=0, busy=false, logs=[];
+const $=id=>document.getElementById(id);
+const ALGORITHM_INFO={
+  LRU:{hint:'LRU: khi Cache đầy, loại video lâu chưa được truy cập nhất.',order:'← Mới dùng gần đây · Lâu chưa dùng →',heading:'3. Bộ nhớ Cache – LRU',reason:'video lâu chưa được truy cập nhất'},
+  LFU:{hint:'LFU: khi Cache đầy, loại video có số lần truy cập thấp nhất; nếu bằng nhau, chọn video lâu chưa được truy cập hơn.',order:'← Truy cập nhiều · Truy cập ít →',heading:'3. Bộ nhớ Cache – LFU',reason:'video có tần suất truy cập thấp nhất'},
+  FIFO:{hint:'FIFO: khi Cache đầy, loại video được đưa vào Cache sớm nhất. Lượt xem lại không làm thay đổi thứ tự này.',order:'← Đưa vào sớm nhất · Đưa vào gần đây →',heading:'3. Bộ nhớ Cache – FIFO',reason:'video được đưa vào Cache sớm nhất'}
+};
+function freshCaches(){return [[],[],[],[]]}
+function setStatus(text,type,latency){$('statusText').textContent=text;$('statusText').className='statusText '+(type||'idle');$('statusLatency').textContent=latency==null?'Độ trễ: —':`Độ trễ: ${latency} ms`}
+function resetSimulation(message='Đã đặt lại – sẵn sàng mô phỏng yêu cầu mới.'){caches=freshCaches();cacheClock=0;total=hits=misses=originRequests=latencySum=0;logs=[];clearRoutes();setStatus(message,'idle',null);$('explanation').innerHTML='<strong>Chờ yêu cầu đầu tiên</strong>Chọn khu vực, chọn video và gửi yêu cầu. Hãy quan sát đường đi và bộ nhớ Cache của Edge tương ứng.';render()}
+function updateAlgorithmInfo(){const info=ALGORITHM_INFO[algorithm];$('algorithmHint').textContent=info.hint;$('cacheHeading').textContent=info.heading;$('cacheOrderHint').textContent=info.order;$('heroTag').textContent=`1 Origin · 4 Edge · 100 video · ${algorithm}`;ALGORITHMS.forEach(a=>$('policy'+a).classList.toggle('selected',a===algorithm))}
+function updateCapacity(){capacity=Number($('capacity').value);resetSimulation(`Đã đổi dung lượng Cache thành ${capacity} video/Edge. Bộ nhớ đã được làm mới để bắt đầu lượt thử công bằng.`)}
+function clearRoutes(){for(let i=0;i<4;i++){['u','o'].forEach(prefix=>$(prefix+i).setAttribute('class','wire'));$('edgeNode'+i).querySelector('rect').setAttribute('class','node edge')}}
+function cacheHas(edge,video){const list=caches[edge],item=list.find(x=>x.id===video);if(!item)return false;cacheClock++;
+  if(algorithm==='LRU'){list.splice(list.indexOf(item),1);item.lastUsed=cacheClock;list.push(item)}
+  else if(algorithm==='LFU'){item.freq++;item.lastUsed=cacheClock}
+  // FIFO: Hit khong thay doi thu tu vao Cache.
+  return true
+}
+function cachePut(edge,video){const list=caches[edge];if(list.some(x=>x.id===video))return null;let evicted=null;
+  if(list.length>=capacity){let victim;
+    if(algorithm==='LFU'){victim=list.reduce((a,b)=>(b.freq<a.freq||(b.freq===a.freq&&b.lastUsed<a.lastUsed))?b:a);}
+    else{victim=list[0]} // LRU: cu nhat theo truy cap; FIFO: nap vao som nhat.
+    evicted=victim.id;list.splice(list.indexOf(victim),1);
+  }
+  cacheClock++;list.push({id:video,freq:1,lastUsed:cacheClock,insertedAt:cacheClock});return evicted
+}
+function orderedForDisplay(list){if(algorithm==='LRU')return [...list].reverse();if(algorithm==='FIFO')return [...list];return [...list].sort((a,b)=>b.freq-a.freq||b.lastUsed-a.lastUsed)}
+function renderCaches(){const root=$('cacheGrid');root.innerHTML='';caches.forEach((list,i)=>{const box=document.createElement('div');box.className='edgeCache'+(Number($('region').value)===i?' selected':'');const shown=orderedForDisplay(list);const chips=shown.length?shown.map(item=>`<span class="chip" title="${algorithm==='LFU'?'Tần suất truy cập: '+item.freq:'Video '+item.id}">Video ${item.id}${algorithm==='LFU'?' · ×'+item.freq:''}</span>`).join(''):'<span class="empty">Cache đang trống</span>';box.innerHTML=`<h4>Edge Server ${i+1}</h4><div class="region">${REGIONS[i]} · ${list.length}/${capacity} vị trí</div><div class="chips">${chips}</div><div class="lruHint">${list.length?ALGORITHM_INFO[algorithm].order:'Chưa lưu video nào'}</div>`;root.appendChild(box)})}
+function renderMetrics(){const ratio=total?hits/total*100:0,avg=total?latencySum/total:0;$('mTotal').textContent=total;$('mHit').textContent=ratio.toFixed(1)+'%';$('mOrigin').textContent=originRequests;$('mLatency').textContent=avg.toFixed(1)+' ms';$('hitBar').style.width=ratio+'%';$('originCompare').textContent=`${originRequests} / ${total} yêu cầu`;$('cdnLatency').textContent=total?avg.toFixed(1)+' ms':'—'}
+function renderLogs(){const body=$('logBody');if(!logs.length){body.innerHTML='<tr><td colspan="6" style="color:#8a98aa;text-align:center">Chưa có dữ liệu. Hãy thử gửi yêu cầu.</td></tr>';return}body.innerHTML=logs.slice(0,9).map(x=>`<tr><td>${x.n}</td><td>${x.region}</td><td>Video ${x.video}</td><td><span class="tag ${x.hit?'hit':'miss'}">${x.hit?'HIT':'MISS'}</span></td><td>${x.latency} ms</td><td>${x.hit?'Không':'Có'}</td></tr>`).join('')}
+function render(){updateAlgorithmInfo();renderCaches();renderMetrics();renderLogs()}
+function explainHit(video,edge){const explanation=algorithm==='FIFO'?'Lưu ý: FIFO không thay đổi thứ tự vào Cache dù video vừa được xem lại.':algorithm==='LFU'?'Số lần truy cập của video này đã được tăng lên.':'Video này được chuyển thành video vừa dùng gần đây nhất.';$('explanation').innerHTML=`<strong style="color:var(--green)">CACHE HIT – Edge đã có Video ${video}</strong>Edge ${edge+1} tìm thấy Video ${video} trong Cache và trả trực tiếp cho người xem. Không cần gửi yêu cầu về Origin, độ trễ mô hình khoảng ${USER_EDGE_MS} ms. ${explanation}`}
+function explainMiss(video,edge,lat,evicted){let detail='';if(evicted){let rule=algorithm==='LFU'?'vì có tần suất truy cập thấp nhất (nếu bằng nhau, chọn video lâu chưa được dùng hơn)':algorithm==='FIFO'?'vì được đưa vào Cache sớm nhất':'vì lâu chưa được truy cập nhất';detail=`<br><br>Cache đã đầy nên ${algorithm} loại Video ${evicted} ${rule}.`}$('explanation').innerHTML=`<strong style="color:var(--orange)">CACHE MISS – Edge chưa có Video ${video}</strong>Edge ${edge+1} phải lấy Video ${video} từ Origin (thêm khoảng ${EDGE_ORIGIN_MS} ms), sau đó lưu video vào Cache để những lượt sau có thể được phục vụ nhanh hơn.${detail}`}
+function sleep(ms){return new Promise(r=>setTimeout(r,ms))}
+async function requestVideo(edge,video){if(busy)return;busy=true;setButtons(true);clearRoutes();$('edgeNode'+edge).querySelector('rect').setAttribute('class','node edge selected');$('u'+edge).setAttribute('class','wire active');setStatus(`Yêu cầu Video ${video}: người xem đang kết nối tới Edge ${edge+1}…`,'idle',null);await sleep(350);
+  let hit=cacheHas(edge,video),lat=USER_EDGE_MS,evicted=null;
+  if(hit){hits++;$('u'+edge).setAttribute('class','wire hit');$('edgeNode'+edge).querySelector('rect').setAttribute('class','node edge hitNode');setStatus(`CACHE HIT – Edge ${edge+1} đã có Video ${video}. Trả video trực tiếp cho người xem.`,'hit',lat);explainHit(video,edge)}
+  else{misses++;originRequests++;lat+=EDGE_ORIGIN_MS;$('u'+edge).setAttribute('class','wire active');$('o'+edge).setAttribute('class','wire miss');$('edgeNode'+edge).querySelector('rect').setAttribute('class','node edge missNode');setStatus(`CACHE MISS – Edge ${edge+1} chưa có Video ${video}, đang lấy từ Origin…`,'miss',null);await sleep(520);evicted=cachePut(edge,video);setStatus(`Đã lấy Video ${video} từ Origin và lưu vào Cache Edge ${edge+1}.`,'miss',lat);explainMiss(video,edge,lat,evicted)}
+  total++;latencySum+=lat;logs.unshift({n:total,region:REGIONS[edge],video,hit,latency:lat});render();await sleep(300);busy=false;setButtons(false)}
+function setButtons(disabled){['requestBtn','autoBtn','popularBtn','resetBtn','compareBtn','region','videoId','capacity','algorithm'].forEach(id=>$(id).disabled=disabled)}
+function zipfVideo(){const alpha=1.12,weights=[];for(let i=1;i<=100;i++)weights.push(1/Math.pow(i,alpha));let sum=weights.reduce((a,b)=>a+b,0),r=Math.random()*sum;for(let i=0;i<weights.length;i++){r-=weights[i];if(r<=0)return i+1}return 100}
+function runPolicySequence(policy,sequence,cap){let list=[],clock=0,h=0,m=0;for(const video of sequence){const item=list.find(x=>x.id===video);if(item){h++;clock++;if(policy==='LRU'){list.splice(list.indexOf(item),1);item.lastUsed=clock;list.push(item)}else if(policy==='LFU'){item.freq++;item.lastUsed=clock}/* FIFO hit: giu nguyen thu tu */}
+  else{m++;if(list.length>=cap){let victim;if(policy==='LFU')victim=list.reduce((a,b)=>(b.freq<a.freq||(b.freq===a.freq&&b.lastUsed<a.lastUsed))?b:a);else victim=list[0];list.splice(list.indexOf(victim),1)}clock++;list.push({id:video,freq:1,lastUsed:clock,insertedAt:clock})}}
+  let final;if(policy==='LRU')final=[...list].reverse().map(x=>x.id);else if(policy==='FIFO')final=list.map(x=>x.id);else final=[...list].sort((a,b)=>b.freq-a.freq||b.lastUsed-a.lastUsed).map(x=>x.id);
+  return {hits:h,misses:m,ratio:h/sequence.length*100,final}}
+function compareAllAlgorithms(){const sequence=[1,2,1,3,4,2,3],cap=3;const tbody=ALGORITHMS.map(a=>{const r=runPolicySequence(a,sequence,cap);return `<tr><td><b>${a}</b></td><td>${r.hits} Hit / ${r.misses} Miss</td><td>${r.ratio.toFixed(1)}%</td><td>${r.final.map(v=>'Video '+v).join(' · ')}</td></tr>`}).join('');$('compareResult').innerHTML=`<table><thead><tr><th>Thuật toán</th><th>Kết quả 7 yêu cầu</th><th>Hit Ratio</th><th>Cache cuối cùng (theo thứ tự hiển thị)</th></tr></thead><tbody>${tbody}</tbody></table><div class="bestNote"><b>Cách đọc kết quả:</b> LRU loại video lâu chưa được truy cập; LFU loại video ít được truy cập nhất; FIFO loại video được nạp vào sớm nhất. Kết quả này chỉ minh họa với chuỗi thử nghiệm trên, không có nghĩa một thuật toán luôn tốt nhất trong mọi tình huống.</div>`}
+$('requestBtn').addEventListener('click',()=>{const v=Number($('videoId').value),e=Number($('region').value);if(!Number.isInteger(v)||v<1||v>100){alert('Vui lòng nhập Video ID từ 1 đến 100.');return}requestVideo(e,v)});
+$('capacity').addEventListener('change',updateCapacity);
+$('algorithm').addEventListener('change',()=>{algorithm=$('algorithm').value;resetSimulation(`Đã chuyển sang ${algorithm}. Bộ nhớ được làm mới để không trộn trạng thái giữa các thuật toán.`)});
+$('region').addEventListener('change',renderCaches);
+$('autoBtn').addEventListener('click',async()=>{if(busy)return;for(let i=0;i<30;i++){const edge=Math.floor(Math.random()*4),video=zipfVideo();$('region').value=String(edge);$('videoId').value=video;await requestVideo(edge,video)}});
+$('popularBtn').addEventListener('click',async()=>{if(busy)return;const e=Number($('region').value);for(const v of [1,1,2,1]){$('videoId').value=v;await requestVideo(e,v)}});
+$('compareBtn').addEventListener('click',compareAllAlgorithms);
+$('resetBtn').addEventListener('click',()=>resetSimulation());
+render();
+</script>
+</body>
+</html>
